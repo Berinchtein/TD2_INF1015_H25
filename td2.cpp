@@ -48,7 +48,35 @@ string lireString(istream& fichier)
 
 #pragma endregion//}
 
-//TODO: Une fonction pour ajouter un Film à une ListeFilms, le film existant déjà; on veut uniquement ajouter le pointeur vers le film existant.  Cette fonction doit doubler la taille du tableau alloué, avec au minimum un élément, dans le cas où la capacité est insuffisante pour ajouter l'élément.  Il faut alors allouer un nouveau tableau plus grand, copier ce qu'il y avait dans l'ancien, et éliminer l'ancien trop petit.  Cette fonction ne doit copier aucun Film ni Acteur, elle doit copier uniquement des pointeurs.
+//TODO: WIP Une fonction pour ajouter un Film à une ListeFilms, le film existant déjà; on veut uniquement ajouter le pointeur vers le film existant.  Cette fonction doit doubler la taille du tableau alloué, avec au minimum un élément, dans le cas où la capacité est insuffisante pour ajouter l'élément.  Il faut alors allouer un nouveau tableau plus grand, copier ce qu'il y avait dans l'ancien, et éliminer l'ancien trop petit.  Cette fonction ne doit copier aucun Film ni Acteur, elle doit copier uniquement des pointeurs.
+void ajouterFilm(const ListeFilms& listeFilms, const Film& film) {
+
+	ListeFilms* ptrListeFilms = new ListeFilms;
+	*ptrListeFilms = listeFilms;
+
+	if (listeFilms.capacite != 0){
+		if (listeFilms.nElements == listeFilms.capacite) {
+
+		}
+		else if (listeFilms.nElements < listeFilms.capacite) {
+
+		}
+		else {
+			cerr << "Erreur: Le nombre d'elements de la liste de films est plus grand que sa capacite."
+		}
+	}
+	else {
+		Film* ptrFilm = new Film;
+		*ptrFilm = film;
+		Film* elementsListeFilms[1] = { ptrFilm };
+
+		
+
+		(*ptrListeFilms).capacite = 1;
+		(*ptrListeFilms).nElements = 1;
+		(*ptrListeFilms).elements = elementsListeFilms;
+	}
+}
 
 //TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
 
@@ -86,7 +114,11 @@ ListeFilms creerListe(string nomFichier)
 	
 	int nElements = lireUint16(fichier);
 
-	//TODO: Créer une liste de films vide.
+	//TODO: WIP Créer une liste de films vide.
+	ListeFilms listeFilms;
+	listeFilms.capacite = 0;
+	listeFilms.nElements = 0;
+
 	for (int i = 0; i < nElements; i++) {
 		lireFilm(fichier); //TODO: Ajouter le film à la liste.
 	}
