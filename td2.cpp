@@ -48,7 +48,44 @@ string lireString(istream& fichier)
 
 #pragma endregion//}
 
-//TODO: WIP Une fonction pour ajouter un Film à une ListeFilms, le film existant déjà; on veut uniquement ajouter le pointeur vers le film existant.  Cette fonction doit doubler la taille du tableau alloué, avec au minimum un élément, dans le cas où la capacité est insuffisante pour ajouter l'élément.  Il faut alors allouer un nouveau tableau plus grand, copier ce qu'il y avait dans l'ancien, et éliminer l'ancien trop petit.  Cette fonction ne doit copier aucun Film ni Acteur, elle doit copier uniquement des pointeurs.
+void ajouterActeur(ListeActeurs& listeActeurs, Acteur& acteur) {
+
+	Acteur** elementsListeActeurs = {};
+
+	if (listeActeurs.capacite != 0) {
+
+		if (listeActeurs.nElements == listeActeurs.capacite) {
+
+			listeActeurs.capacite *= 2;
+			elementsListeActeurs = new Acteur * [listeActeurs.capacite];
+			for (int i : range(listeActeurs.nElements)) {
+				elementsListeActeurs[i] = listeActeurs.elements[i];
+			}
+			listeActeurs.nElements++;
+			listeActeurs.elements = elementsListeActeurs;
+			listeActeurs.elements[listeActeurs.nElements - 1] = &acteur;
+		}
+		else if (listeActeurs.nElements < listeActeurs.capacite) {
+
+			listeActeurs.nElements++;
+			listeActeurs.elements[listeActeurs.nElements] = &acteur;
+		}
+		else {
+			cerr << "Erreur: Le nombre d'elements de la liste de films est plus grand que sa capacite.";
+		}
+	}
+	else {
+
+		listeActeurs.capacite = 1;
+		elementsListeActeurs = new Acteur * [listeActeurs.capacite];
+		listeActeurs.nElements = 1;
+		listeActeurs.elements = elementsListeActeurs;
+		listeActeurs.elements[0] = &acteur;
+	}
+
+	delete[] elementsListeActeurs;
+}
+
 void ajouterFilm(ListeFilms& listeFilms, Film& film) {
 
 	Film** elementsListeFilms = {};
@@ -74,7 +111,6 @@ void ajouterFilm(ListeFilms& listeFilms, Film& film) {
 		else {
 			cerr << "Erreur: Le nombre d'elements de la liste de films est plus grand que sa capacite.";
 		}
-
 	}
 	else {
 
