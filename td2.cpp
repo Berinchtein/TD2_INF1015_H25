@@ -48,81 +48,66 @@ string lireString(istream& fichier)
 
 #pragma endregion//}
 
-void ajouterActeur(ListeActeurs& listeActeurs, Acteur& acteur) {
+void ajouterActeur(ListeActeurs & listeActeurs, Acteur* acteur) {
 
 	Acteur** elementsListeActeurs = {};
 
+	listeActeurs.nElements++;
+
 	if (listeActeurs.capacite != 0) {
 
-		if (listeActeurs.nElements == listeActeurs.capacite) {
+		if (listeActeurs.nElements > listeActeurs.capacite) {
 
 			listeActeurs.capacite *= 2;
 			elementsListeActeurs = new Acteur * [listeActeurs.capacite];
 			for (int i : range(listeActeurs.nElements)) {
 				elementsListeActeurs[i] = listeActeurs.elements[i];
 			}
-			listeActeurs.nElements++;
+			delete listeActeurs.elements;
 			listeActeurs.elements = elementsListeActeurs;
-			listeActeurs.elements[listeActeurs.nElements - 1] = &acteur;
-		}
-		else if (listeActeurs.nElements < listeActeurs.capacite) {
-
-			listeActeurs.nElements++;
-			listeActeurs.elements[listeActeurs.nElements] = &acteur;
-		}
-		else {
-			cerr << "Erreur: Le nombre d'elements de la liste de films est plus grand que sa capacite.";
 		}
 	}
 	else {
 
-		listeActeurs.capacite = 1;
+		listeActeurs.capacite++;
 		elementsListeActeurs = new Acteur * [listeActeurs.capacite];
-		listeActeurs.nElements = 1;
+		delete listeActeurs.elements;
 		listeActeurs.elements = elementsListeActeurs;
-		listeActeurs.elements[0] = &acteur;
 	}
 
-	delete[] elementsListeActeurs;
+	listeActeurs.elements[listeActeurs.nElements - 1] = acteur;
 }
 
-void ajouterFilm(ListeFilms& listeFilms, Film& film) {
+void ajouterFilm(ListeFilms & listeFilms, Film* film) {
 
 	Film** elementsListeFilms = {};
 
+	listeFilms.nElements++;
+
 	if (listeFilms.capacite != 0) {
 
-		if (listeFilms.nElements == listeFilms.capacite) {
+		if (listeFilms.nElements > listeFilms.capacite) {
 
 			listeFilms.capacite *= 2;
 			elementsListeFilms = new Film * [listeFilms.capacite];
 			for (int i : range(listeFilms.nElements)) {
 				elementsListeFilms[i] = listeFilms.elements[i];
 			}
-			listeFilms.nElements++;
+			delete[] listeFilms.elements;
 			listeFilms.elements = elementsListeFilms;
-			listeFilms.elements[listeFilms.nElements - 1] = &film;
-		}
-		else if (listeFilms.nElements < listeFilms.capacite) {
-
-			listeFilms.nElements++;
-			listeFilms.elements[listeFilms.nElements] = &film;
-		}
-		else {
-			cerr << "Erreur: Le nombre d'elements de la liste de films est plus grand que sa capacite.";
 		}
 	}
 	else {
 
-		listeFilms.capacite = 1;
+		listeFilms.capacite++;
 		elementsListeFilms = new Film * [listeFilms.capacite];
-		listeFilms.nElements = 1;
+		delete[] listeFilms.elements;
 		listeFilms.elements = elementsListeFilms;
-		listeFilms.elements[0] = &film;
 	}
 
-	delete[] elementsListeFilms;
+	listeFilms.elements[listeFilms.nElements - 1] = film;
 }
+
 
 //TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
 
@@ -131,30 +116,37 @@ void ajouterFilm(ListeFilms& listeFilms, Film& film) {
 //TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
 Acteur* lireActeur(istream& fichier)
 {
-	Acteur acteur = {};
-	acteur.nom = lireString(fichier);
-	acteur.anneeNaissance = lireUint16(fichier);
-	acteur.sexe = lireUint8(fichier);
+	Acteur * acteur = new Acteur;
+	ListeFilms acteurListesFilms = {};
+	acteurListesFilms.capacite = 1;
+	acteurListesFilms.nElements = 0;
+	acteurListesFilms.elements = new Film * [acteurListesFilms.capacite];
+	string nomActeur = lireString(fichier);
+	acteur->nom = nomActeur;
+	acteur->anneeNaissance = lireUint16(fichier);
+	acteur->sexe = lireUint8(fichier);
+	acteur->joueDans = acteurListesFilms;
 	//afficherActeur(acteur);
-	return &acteur;//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
+	return acteur;//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
 }
 
 Film* lireFilm(istream& fichier)
 {
-	Film film = {};
-	film.titre = lireString(fichier);
-	film.realisateur = lireString(fichier);
-	film.anneeSortie = lireUint16(fichier);
-	film.recette = lireUint16(fichier);
-	film.acteurs.nElements = lireUint8(fichier);  //NOTE: Vous avez le droit d'allouer d'un coup le tableau pour les acteurs, sans faire de réallocation comme pour ListeFilms.  Vous pouvez aussi copier-coller les fonctions d'allocation de ListeFilms ci-dessus dans des nouvelles fonctions et faire un remplacement de Film par Acteur, pour réutiliser cette réallocation.
-	film.acteurs.elements = new Acteur * [film.acteurs.nElements];
-	for (int i = 0; i < film.acteurs.nElements; i++) {
+	Film* film = new Film;
+	film->titre = lireString(fichier);
+	film->realisateur = lireString(fichier);
+	film->anneeSortie = lireUint16(fichier);
+	film->recette = lireUint16(fichier);
+	film->acteurs.capacite = lireUint8(fichier);  //NOTE: Vous avez le droit d'allouer d'un coup le tableau pour les acteurs, sans faire de réallocation comme pour ListeFilms.  Vous pouvez aussi copier-coller les fonctions d'allocation de ListeFilms ci-dessus dans des nouvelles fonctions et faire un remplacement de Film par Acteur, pour réutiliser cette réallocation.
+	film->acteurs.nElements = 0;
+	film->acteurs.elements = new Acteur*[film->acteurs.capacite];
+	for (int i = 0; i < film->acteurs.capacite; i++) {
 		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
-		film.acteurs.elements[i] = lireActeur(fichier);
+		ajouterActeur(film->acteurs, lireActeur(fichier));
 		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
-		//ajouterFilm(film.acteurs.elements[i]->joueDans, film);
+		ajouterFilm(film->acteurs.elements[i]->joueDans, film);
 	}
-	return &film; //TODO: Retourner le pointeur vers le nouveau film.
+	return film; //&film; //TODO: Retourner le pointeur vers le nouveau film.
 }
 
 ListeFilms creerListe(string nomFichier)
@@ -166,18 +158,15 @@ ListeFilms creerListe(string nomFichier)
 
 	//TODO: WIP Créer une liste de films vide.
 	ListeFilms listeFilms = {};
-	listeFilms.capacite = 0;
+	listeFilms.capacite = 1;
 	listeFilms.nElements = 0;
-	listeFilms.elements = new Film*;
-
-	//cout << listeFilms.capacite << endl;
-	//cout << &listeFilms << endl;
+	listeFilms.elements = new Film*[listeFilms.capacite];
 
 	for (int i = 0; i < nElements; i++) {
-		cout << "Boucle n." << i << endl;
+		cout << "Boucle n." << i+1 << endl;
+		ajouterFilm(listeFilms, lireFilm(fichier)); //TODO: Ajouter le film à la liste.
 		cout << "Capacite listeFilms: " << listeFilms.capacite << endl;
 		cout << "nElements listeFilms: " << listeFilms.nElements << endl;
-		ajouterFilm(listeFilms, *lireFilm(fichier)); //TODO: Ajouter le film à la liste.
 	}
 
 	return listeFilms; //TODO: Retourner la liste de films.
