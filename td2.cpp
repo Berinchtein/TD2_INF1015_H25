@@ -63,7 +63,7 @@ void ajouterActeur(ListeActeurs & listeActeurs, Acteur* acteur) {
 			for (int i : range(listeActeurs.nElements)) {
 				elementsListeActeurs[i] = listeActeurs.elements[i];
 			}
-			delete listeActeurs.elements;
+			delete[] listeActeurs.elements;
 			listeActeurs.elements = elementsListeActeurs;
 		}
 	}
@@ -71,7 +71,7 @@ void ajouterActeur(ListeActeurs & listeActeurs, Acteur* acteur) {
 
 		listeActeurs.capacite++;
 		elementsListeActeurs = new Acteur * [listeActeurs.capacite];
-		delete listeActeurs.elements;
+		delete[] listeActeurs.elements;
 		listeActeurs.elements = elementsListeActeurs;
 	}
 
@@ -110,6 +110,16 @@ void ajouterFilm(ListeFilms & listeFilms, Film* film) {
 
 
 //TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
+void enleverFilm(ListeFilms& listeFilms, Film* film)
+{
+	for (int i : range(listeFilms.nElements)) {
+		if (listeFilms.elements[i] == film) {
+			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
+			listeFilms.nElements--;
+			break;
+		}
+	}
+}
 
 //TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
 
@@ -125,8 +135,8 @@ Acteur* lireActeur(istream& fichier)
 	acteur->nom = nomActeur;
 	acteur->anneeNaissance = lireUint16(fichier);
 	acteur->sexe = lireUint8(fichier);
+	delete[] acteur->joueDans.elements;
 	acteur->joueDans = acteurListesFilms;
-	//afficherActeur(acteur);
 	return acteur;//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
 }
 
