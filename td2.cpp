@@ -135,7 +135,6 @@ Acteur* lireActeur(istream& fichier)
 	acteur->nom = nomActeur;
 	acteur->anneeNaissance = lireUint16(fichier);
 	acteur->sexe = lireUint8(fichier);
-	delete[] acteur->joueDans.elements;
 	acteur->joueDans = acteurListesFilms;
 	return acteur;//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
 }
