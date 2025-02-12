@@ -124,6 +124,7 @@ void enleverFilm(ListeFilms& listeFilms, Film* film)
 
 //TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
 
+
 //TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
 Acteur* lireActeur(istream& fichier)
 {
@@ -150,7 +151,8 @@ Film* lireFilm(istream& fichier)
 	film->acteurs.capacite = lireUint8(fichier);  //NOTE: Vous avez le droit d'allouer d'un coup le tableau pour les acteurs, sans faire de réallocation comme pour ListeFilms.  Vous pouvez aussi copier-coller les fonctions d'allocation de ListeFilms ci-dessus dans des nouvelles fonctions et faire un remplacement de Film par Acteur, pour réutiliser cette réallocation.
 	film->acteurs.nElements = 0;
 	film->acteurs.elements = new Acteur*[film->acteurs.capacite];
-	for (int i = 0; i < film->acteurs.capacite; i++) {
+	//for (int i = 0; i < film->acteurs.capacite; i++) {
+	for (int i : range(film->acteurs.capacite)){
 		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
 		ajouterActeur(film->acteurs, lireActeur(fichier));
 		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
@@ -172,7 +174,8 @@ ListeFilms creerListe(string nomFichier)
 	listeFilms.nElements = 0;
 	listeFilms.elements = new Film*[listeFilms.capacite];
 
-	for (int i = 0; i < nElements; i++) {
+	//for (int i = 0; i < nElements; i++) {
+	for (int i : range(nElements)){
 		cout << "Boucle n." << i+1 << endl;
 		ajouterFilm(listeFilms, lireFilm(fichier)); //TODO: Ajouter le film à la liste.
 		cout << "Capacite listeFilms: " << listeFilms.capacite << endl;
@@ -199,7 +202,8 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 	static const string ligneDeSeparation = {};
 	cout << ligneDeSeparation;
 	//TODO: Changer le for pour utiliser un span.
-	for (int i = 0; i < listeFilms.nElements; i++) {
+	//for (int i = 0; i < listeFilms.nElements; i++) {
+	for (int i : range(listeFilms.nElements)){
 		//TODO: Afficher le film.
 		cout << ligneDeSeparation;
 	}
