@@ -82,12 +82,12 @@ void ListeFilms::ajouterFilm(Film* film) {
 	elements_[nElements_++] = film;
 }
 
-void enleverFilm(ListeFilms& listeFilms, Film* film)
+void ListeFilms::enleverFilm(Film* film)
 {
-	for (int i : range(listeFilms.nElements)) {
-		if (listeFilms.elements[i] == film) {
-			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
-			listeFilms.nElements--;
+	for (int i : range(nElements_)) {
+		if (elements_[i] == film) {
+			elements_[i] = elements_[nElements_ - 1];
+			nElements_--;
 			break;
 		}
 	}
