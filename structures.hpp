@@ -3,6 +3,8 @@
 
 #include <string>
 
+using namespace std;
+
 struct Film; struct Acteur; // Permet d'utiliser les types alors qu'ils seront défini après.
 
 /*
@@ -15,13 +17,19 @@ struct ListeFilms {
 class ListeFilms
 {
 public:
-	ListeFilms(string nomFichier);
+	ListeFilms();
 	~ListeFilms();
 	void ajouterFilm(Film* film);
 	void enleverFilm(Film* film);
-	Acteur* trouverActeur(const string& nomActeur);
+	Acteur* trouverActeur(const string& nomActeur) const;
 	Acteur* lireActeur(istream& fichier);
 	Film* lireFilm(istream& fichier);
+	ListeFilms(string nomFichier);
+	void afficherListeFilms();
+	void afficherFilmographieActeur(const string& nomActeur);
+
+	int getNElements();
+	Film** getElements();
 
 private:
 	int capacite_;
