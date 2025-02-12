@@ -65,27 +65,27 @@ void ajouterActeur(ListeActeurs& listeActeurs, Acteur* acteur) {
 	listeActeurs.elements[listeActeurs.nElements++] = acteur;
 }
 
-void ajouterFilm(ListeFilms& listeFilms, Film* film) {
+void ListeFilms::ajouterFilm(Film* film) {
 
-	if (listeFilms.nElements >= listeFilms.capacite) {
-		if (listeFilms.capacite == 0) {
-			listeFilms.capacite = 1;
+	if (nElements_ >= capacite_) {
+		if (capacite_ == 0) {
+			capacite_ = 1;
 		}
 		else {
-			listeFilms.capacite *= 2;
+			capacite_ *= 2;
 		}
-		Film** nouvelleListe = new Film * [listeFilms.capacite];
-		copy(listeFilms.elements, listeFilms.elements + listeFilms.nElements, nouvelleListe);
-		delete[] listeFilms.elements;
-		listeFilms.elements = nouvelleListe;
+		Film** nouvelleListe = new Film * [capacite_];
+		copy(elements_, elements_ + nElements_, nouvelleListe);
+		delete[] elements_;
+		elements_ = nouvelleListe;
 	}
-	listeFilms.elements[listeFilms.nElements++] = film;
+	elements_[nElements_++] = film;
 }
 
-void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
+void enleverFilm(ListeFilms& listeFilms, Film* film)
 {
 	for (int i : range(listeFilms.nElements)) {
-		if (listeFilms.elements[i] == inputFilm) {
+		if (listeFilms.elements[i] == film) {
 			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
 			listeFilms.nElements--;
 			break;
