@@ -107,7 +107,7 @@ Acteur* trouverActeur(const ListeFilms& listeFilms, const string& nomActeur)
 
 Acteur* lireActeur(ListeFilms& listeFilms, istream& fichier)
 {
-	Acteur* acteur = new Acteur; 
+	Acteur* acteur = new Acteur;
 
 	string nomActeur = lireString(fichier);
 	acteur->nom = nomActeur;
@@ -170,8 +170,33 @@ ListeFilms creerListe(string nomFichier)
 }
 
 //TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
+void detruireFilm(Film* film)
+{
+	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
+		for (Film* filmActeur : span(acteur->joueDans.elements, acteur->joueDans.nElements)) {
+			if (filmActeur == film) {
+				filmActeur = acteur->joueDans.elements[--acteur->joueDans.nElements];
+				break;
+			}
+		}
+		if (acteur->joueDans.nElements == 0) {
+			cout << "Destruction de l'acteur: " << acteur->nom << endl;
+			delete[] acteur->joueDans.elements;
+			delete acteur;
+		}
+	}
+	delete[] film->acteurs.elements;
+	delete film;
+}
 
 //TODO: Une fonction pour détruire une ListeFilms et tous les films qu'elle contient.
+void detruireListeFilms(ListeFilms* listeFilms)
+{
+	for (Film* film : span(listeFilms->elements, listeFilms->nElements)) {
+		delete film;
+	}
+	delete listeFilms;
+}
 
 void afficherActeur(const Acteur& acteur)
 {
