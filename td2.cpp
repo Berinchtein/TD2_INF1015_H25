@@ -87,7 +87,6 @@ void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
 	for (int i : range(listeFilms.nElements)) {
 		if (listeFilms.elements[i] == inputFilm) {
 			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
-			//delete listeFilms.elements[listeFilms.nElements - 1];
 			listeFilms.nElements--;
 			break;
 		}
@@ -163,14 +162,13 @@ ListeFilms creerListe(string nomFichier)
 	for (int i : range(nElements)) {
 		cout << "Boucle n." << i + 1 << endl;
 		ajouterFilm(listeFilms, lireFilm(listeFilms, fichier));
-		cout << "Capacite listeFilms: " << listeFilms.capacite << endl;
+		cout << "capacite listeFilms: " << listeFilms.capacite << endl;
 		cout << "nElements listeFilms: " << listeFilms.nElements << endl;
 	}
 
 	return listeFilms;
 }
 
-//TODO: Une fonction pour détruire un film (relâcher toute la mémoire associée à ce film, et les acteurs qui ne jouent plus dans aucun films de la collection).  Noter qu'il faut enleve le film détruit des films dans lesquels jouent les acteurs.  Pour fins de débogage, affichez les noms des acteurs lors de leur destruction.
 void detruireFilm(Film* film)
 {
 	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
@@ -190,7 +188,7 @@ void detruireListeFilms(ListeFilms* listeFilms)
 	for (Film* film : span(listeFilms->elements, listeFilms->nElements)) {
 		detruireFilm(film);
 	}
-	delete listeFilms;
+	delete[] listeFilms->elements;
 }
 
 void afficherActeur(const Acteur& acteur)
@@ -231,11 +229,7 @@ int main()
 
 	static const string ligneDeSeparation = "\n\033[35m════════════════════════════════════════\033[0m\n";
 
-	//TODO: Chaque TODO dans cette fonction devrait se faire en 1 ou 2 lignes, en appelant les fonctions écrites.
-
-	//TODO: La ligne suivante devrait lire le fichier binaire en allouant la mémoire nécessaire.  Devrait afficher les noms de 20 acteurs sans doublons (par l'affichage pour fins de débogage dans votre fonction lireActeur).
 	ListeFilms listeFilms = creerListe("films.bin");
-	cout << "CREERLISTE DONE" << endl;
 
 	cout << ligneDeSeparation << "Le premier film de la liste est:" << endl;
 	cout << endl;
@@ -256,7 +250,7 @@ int main()
 	afficherListeFilms(listeFilms);
 
 	//TODO: Faire les appels qui manquent pour avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
-	//detruireListeFilms(&listeFilms);
+	detruireListeFilms(&listeFilms);
 
 	//TODO: Détruire tout avant de terminer le programme.  La bibliothèque de verification_allocation devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
 }
