@@ -84,10 +84,10 @@ void ajouterFilm(ListeFilms& listeFilms, Film* film) {
 
 void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
 {
-	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
-		if (film == inputFilm) {
-			film = listeFilms.elements[listeFilms.nElements - 1];
-			delete listeFilms.elements[listeFilms.nElements - 1];
+	for (int i : range(listeFilms.nElements)) {
+		if (listeFilms.elements[i] == inputFilm) {
+			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
+			//delete listeFilms.elements[listeFilms.nElements - 1];
 			listeFilms.nElements--;
 			break;
 		}
@@ -174,13 +174,7 @@ ListeFilms creerListe(string nomFichier)
 void detruireFilm(Film* film)
 {
 	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
-		//enleverFilm(acteur->joueDans, film);
-		for (Film* filmActeur : span(acteur->joueDans.elements, acteur->joueDans.nElements)) {
-			if (filmActeur == film) {
-				filmActeur = acteur->joueDans.elements[--acteur->joueDans.nElements];
-				break;
-			}
-		}
+		enleverFilm(acteur->joueDans, film);
 		if (acteur->joueDans.nElements == 0) {
 			cout << "Destruction de l'acteur: " << acteur->nom << endl;
 			delete[] acteur->joueDans.elements;
@@ -194,7 +188,7 @@ void detruireFilm(Film* film)
 void detruireListeFilms(ListeFilms* listeFilms)
 {
 	for (Film* film : span(listeFilms->elements, listeFilms->nElements)) {
-		delete film;
+		detruireFilm(film);
 	}
 	delete listeFilms;
 }
@@ -256,11 +250,13 @@ int main()
 	afficherFilmographieActeur(listeFilms, "Benedict Cumberbatch");
 
 	detruireFilm(listeFilms.elements[0]);
+	enleverFilm(listeFilms, listeFilms.elements[0]);
 
 	cout << ligneDeSeparation << "Les films sont maintenant:" << endl;
-	//TODO: Afficher la liste des films.
+	afficherListeFilms(listeFilms);
 
 	//TODO: Faire les appels qui manquent pour avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
+	//detruireListeFilms(&listeFilms);
 
 	//TODO: Détruire tout avant de terminer le programme.  La bibliothèque de verification_allocation devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
 }
