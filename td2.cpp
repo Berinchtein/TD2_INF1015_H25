@@ -110,7 +110,6 @@ void ajouterFilm(ListeFilms & listeFilms, Film* film) {
 
 void enleverFilm(ListeFilms& listeFilms, Film* film)
 {
-	//Ne réarrange pas les elements, peut être une source de problemes
 	listeFilms.nElements--;
 
 	for (int i : range(listeFilms.nElements)) {
@@ -122,20 +121,17 @@ void enleverFilm(ListeFilms& listeFilms, Film* film)
 	}
 }
 
-//TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
-Acteur* trouverActeur( span<Film*> elementsListeFilms, const string& nomActeur)
+Acteur* trouverActeur(ListeFilms& listeFilms, const string& nomActeur)
 {
 	Acteur* ptrActeur = nullptr;
-	for (Film* film : elementsListeFilms) {
+	// Il faudrait essayer d'implementer span pour films
+	for (Film* film : range(*(listeFilms.elements))) {
 		// Il faudrait essayer d'implementer span pour acteurs
-		for (int i : range(film->acteurs.nElements)) {
-			if (film->acteurs.elements[i]->nom == nomActeur) {
-				ptrActeur = film->acteurs.elements[i];
+		for (Acteur* acteur : range(*(film->acteurs.elements))) {
+			if (acteur->nom == nomActeur) {
+				ptrActeur = acteur;
 				break;
 			}
-		}
-		if (ptrActeur != nullptr) {
-			break;
 		}
 	}
 	return ptrActeur;
@@ -143,7 +139,7 @@ Acteur* trouverActeur( span<Film*> elementsListeFilms, const string& nomActeur)
 
 
 //TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
-Acteur* lireActeur(istream& fichier)
+Acteur* lireActeur(ListeFilms& listeFilms, istream& fichier)
 {
 	Acteur * acteur = new Acteur;
 	ListeFilms acteurListesFilms = {};
@@ -151,6 +147,10 @@ Acteur* lireActeur(istream& fichier)
 	acteurListesFilms.nElements = 0;
 	acteurListesFilms.elements = new Film * [acteurListesFilms.capacite];
 	string nomActeur = lireString(fichier);
+	if (trouverActeur(listeFilms.elements, nomActeur) != nullptr) {
+		delete acteur;
+		return trouverActeur(listeFilms.elements, nomActeur);
+	}
 	acteur->nom = nomActeur;
 	acteur->anneeNaissance = lireUint16(fichier);
 	acteur->sexe = lireUint8(fichier);
@@ -158,7 +158,7 @@ Acteur* lireActeur(istream& fichier)
 	return acteur;//TODO: Retourner un pointeur soit vers un acteur existant ou un nouvel acteur ayant les bonnes informations, selon si l'acteur existait déjà.  Pour fins de débogage, affichez les noms des acteurs crées; vous ne devriez pas voir le même nom d'acteur affiché deux fois pour la création.
 }
 
-Film* lireFilm(istream& fichier)
+Film* lireFilm(ListeFilms& listeFilms, istream& fichier)
 {
 	Film* film = new Film;
 	film->titre = lireString(fichier);
@@ -171,7 +171,7 @@ Film* lireFilm(istream& fichier)
 	//for (int i = 0; i < film->acteurs.capacite; i++) {
 	for (int i : range(film->acteurs.capacite)){
 		//TODO: Placer l'acteur au bon endroit dans les acteurs du film.
-		ajouterActeur(film->acteurs, lireActeur(fichier));
+		ajouterActeur(film->acteurs, lireActeur(listeFilms, fichier));
 		//TODO: Ajouter le film à la liste des films dans lesquels l'acteur joue.
 		ajouterFilm(film->acteurs.elements[i]->joueDans, film);
 	}
@@ -194,7 +194,7 @@ ListeFilms creerListe(string nomFichier)
 	//for (int i = 0; i < nElements; i++) {
 	for (int i : range(nElements)){
 		cout << "Boucle n." << i+1 << endl;
-		ajouterFilm(listeFilms, lireFilm(fichier)); //TODO: Ajouter le film à la liste.
+		ajouterFilm(listeFilms, lireFilm(listeFilms, fichier)); //TODO: Ajouter le film à la liste.
 		cout << "Capacite listeFilms: " << listeFilms.capacite << endl;
 		cout << "nElements listeFilms: " << listeFilms.nElements << endl;
 	}
