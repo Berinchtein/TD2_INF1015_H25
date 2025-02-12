@@ -95,16 +95,14 @@ void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
 
 Acteur* trouverActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
-	Acteur* ptrActeur = nullptr;
 	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
 		for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
 			if (acteur->nom == nomActeur) {
-				ptrActeur = acteur;
-				break;
+				return acteur;
 			}
 		}
 	}
-	return ptrActeur;
+	return nullptr;
 }
 
 Acteur* lireActeur(ListeFilms& listeFilms, istream& fichier)
