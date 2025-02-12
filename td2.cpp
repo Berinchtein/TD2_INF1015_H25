@@ -121,7 +121,7 @@ void enleverFilm(ListeFilms& listeFilms, Film* film)
 	}
 }
 
-Acteur* trouverActeur(ListeFilms& listeFilms, const string& nomActeur)
+Acteur* trouverActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
 	Acteur* ptrActeur = nullptr;
 	// Il faudrait essayer d'implementer span pour films
@@ -220,7 +220,7 @@ void afficherFilm(const Film& film)
 void afficherListeFilms(const ListeFilms& listeFilms)
 {
 	//TODO: Utiliser des caractères Unicode pour définir la ligne de séparation (différente des autres lignes de séparations dans ce progamme).
-	static const string ligneDeSeparation = {};
+	static const string ligneDeSeparation = "\n";
 	cout << ligneDeSeparation;
 	//TODO: Changer le for pour utiliser un span.
 	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
@@ -232,7 +232,7 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 void afficherFilmographieActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
 	//TODO: Utiliser votre fonction pour trouver l'acteur (au lieu de le mettre à nullptr).
-	const Acteur* acteur = nullptr;
+	const Acteur* acteur = trouverActeur(listeFilms, nomActeur);
 	if (acteur == nullptr)
 		cout << "Aucun acteur de ce nom" << endl;
 	else
