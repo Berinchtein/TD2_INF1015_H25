@@ -107,23 +107,23 @@ Acteur* trouverActeur(const ListeFilms& listeFilms, const string& nomActeur)
 
 Acteur* lireActeur(ListeFilms& listeFilms, istream& fichier)
 {
-	Acteur* acteur = new Acteur;
-
-	ListeFilms acteurListesFilms = {};
-	acteurListesFilms.capacite = 1;
-	acteurListesFilms.nElements = 0;
-	acteurListesFilms.elements = new Film * [acteurListesFilms.capacite];
+	Acteur* acteur = new Acteur; 
 
 	string nomActeur = lireString(fichier);
 	acteur->nom = nomActeur;
 	acteur->anneeNaissance = lireUint16(fichier);
 	acteur->sexe = lireUint8(fichier);
-	acteur->joueDans = acteurListesFilms;
 	if (trouverActeur(listeFilms, nomActeur) != nullptr) {
 		cout << "Nom de l'acteur (EXISTANT): " << trouverActeur(listeFilms, nomActeur)->nom << endl;
 		delete acteur;
 		return trouverActeur(listeFilms, nomActeur);
 	}
+
+	ListeFilms acteurListesFilms = {};
+	acteurListesFilms.capacite = 1;
+	acteurListesFilms.nElements = 0;
+	acteurListesFilms.elements = new Film * [acteurListesFilms.capacite];
+	acteur->joueDans = acteurListesFilms;
 	cout << "Nom de l'acteur (NOUVEAU): " << acteur->nom << endl;
 	return acteur;
 }
