@@ -108,14 +108,15 @@ void ajouterFilm(ListeFilms & listeFilms, Film* film) {
 	listeFilms.elements[listeFilms.nElements - 1] = film;
 }
 
-
-//TODO: Une fonction pour enlever un Film d'une ListeFilms (enlever le pointeur) sans effacer le film; la fonction prenant en paramètre un pointeur vers le film à enlever.  L'ordre des films dans la liste n'a pas à être conservé.
 void enleverFilm(ListeFilms& listeFilms, Film* film)
 {
+	//Ne réarrange pas les elements, peut être une source de problemes
+	listeFilms.nElements--;
+
 	for (int i : range(listeFilms.nElements)) {
 		if (listeFilms.elements[i] == film) {
 			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
-			listeFilms.nElements--;
+			delete listeFilms.elements[listeFilms.nElements - 1];
 			break;
 		}
 	}
