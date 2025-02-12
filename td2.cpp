@@ -189,7 +189,6 @@ void detruireFilm(Film* film)
 	delete film;
 }
 
-//TODO: Une fonction pour détruire une ListeFilms et tous les films qu'elle contient.
 void detruireListeFilms(ListeFilms* listeFilms)
 {
 	for (Film* film : span(listeFilms->elements, listeFilms->nElements)) {
@@ -213,10 +212,8 @@ void afficherFilm(const Film& film)
 
 void afficherListeFilms(const ListeFilms& listeFilms)
 {
-	//TODO: Utiliser des caractères Unicode pour définir la ligne de séparation (différente des autres lignes de séparations dans ce progamme).
 	static const string ligneDeSeparation = "\n";
 	cout << ligneDeSeparation;
-	//TODO: Changer le for pour utiliser un span.
 	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
 		afficherFilm(*film);
 		cout << ligneDeSeparation;
@@ -225,7 +222,6 @@ void afficherListeFilms(const ListeFilms& listeFilms)
 
 void afficherFilmographieActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
-	//TODO: Utiliser votre fonction pour trouver l'acteur (au lieu de le mettre à nullptr).
 	const Acteur* acteur = trouverActeur(listeFilms, nomActeur);
 	if (acteur == nullptr)
 		cout << "Aucun acteur de ce nom" << endl;
@@ -247,6 +243,7 @@ int main()
 
 	cout << ligneDeSeparation << "Le premier film de la liste est:" << endl;
 	//TODO: Afficher le premier film de la liste.  Devrait être Alien.
+	afficherFilm(*listeFilms.elements[0]);
 
 	cout << ligneDeSeparation << "Les films sont:" << endl;
 	//TODO: Afficher la liste des films.  Il devrait y en avoir 7.
