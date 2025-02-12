@@ -123,6 +123,23 @@ void enleverFilm(ListeFilms& listeFilms, Film* film)
 }
 
 //TODO: Une fonction pour trouver un Acteur par son nom dans une ListeFilms, qui retourne un pointeur vers l'acteur, ou nullptr si l'acteur n'est pas trouvé.  Devrait utiliser span.
+Acteur* trouverActeur( span<Film*> elementsListeFilms, const string& nomActeur)
+{
+	Acteur* ptrActeur = nullptr;
+	for (Film* film : elementsListeFilms) {
+		// Il faudrait essayer d'implementer span pour acteurs
+		for (int i : range(film->acteurs.nElements)) {
+			if (film->acteurs.elements[i]->nom == nomActeur) {
+				ptrActeur = film->acteurs.elements[i];
+				break;
+			}
+		}
+		if (ptrActeur != nullptr) {
+			break;
+		}
+	}
+	return ptrActeur;
+}
 
 
 //TODO: Compléter les fonctions pour lire le fichier et créer/allouer une ListeFilms.  La ListeFilms devra être passée entre les fonctions, pour vérifier l'existence d'un Acteur avant de l'allouer à nouveau (cherché par nom en utilisant la fonction ci-dessus).
