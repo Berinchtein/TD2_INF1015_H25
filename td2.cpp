@@ -50,72 +50,44 @@ string lireString(istream& fichier)
 
 void ajouterActeur(ListeActeurs& listeActeurs, Acteur* acteur) {
 
-	Acteur** elementsListeActeurs = {};
-
-	listeActeurs.nElements++;
-
-	if (listeActeurs.capacite != 0) {
-
-		if (listeActeurs.nElements > listeActeurs.capacite) {
-
-			listeActeurs.capacite *= 2;
-			elementsListeActeurs = new Acteur * [listeActeurs.capacite];
-			for (int i : range(listeActeurs.nElements)) {
-				elementsListeActeurs[i] = listeActeurs.elements[i];
-			}
-			delete[] listeActeurs.elements;
-			listeActeurs.elements = elementsListeActeurs;
+	if (listeActeurs.nElements >= listeActeurs.capacite) {
+		if (listeActeurs.capacite == 0) {
+			listeActeurs.capacite = 1;
 		}
-	}
-	else {
-
-		listeActeurs.capacite++;
-		elementsListeActeurs = new Acteur * [listeActeurs.capacite];
+		else {
+			listeActeurs.capacite *= 2;
+		}
+		Acteur** nouvelleListe = new Acteur * [listeActeurs.capacite];
+		copy(listeActeurs.elements, listeActeurs.elements + listeActeurs.nElements, nouvelleListe);
 		delete[] listeActeurs.elements;
-		listeActeurs.elements = elementsListeActeurs;
+		listeActeurs.elements = nouvelleListe;
 	}
-
-	listeActeurs.elements[listeActeurs.nElements - 1] = acteur;
+	listeActeurs.elements[listeActeurs.nElements++] = acteur;
 }
 
 void ajouterFilm(ListeFilms& listeFilms, Film* film) {
 
-	Film** elementsListeFilms = {};
-
-	listeFilms.nElements++;
-
-	if (listeFilms.capacite != 0) {
-
-		if (listeFilms.nElements > listeFilms.capacite) {
-
-			listeFilms.capacite *= 2;
-			elementsListeFilms = new Film * [listeFilms.capacite];
-			for (int i : range(listeFilms.nElements)) {
-				elementsListeFilms[i] = listeFilms.elements[i];
-			}
-			delete[] listeFilms.elements;
-			listeFilms.elements = elementsListeFilms;
+	if (listeFilms.nElements >= listeFilms.capacite) {
+		if (listeFilms.capacite == 0) {
+			listeFilms.capacite = 1;
 		}
-	}
-	else {
-
-		listeFilms.capacite++;
-		elementsListeFilms = new Film * [listeFilms.capacite];
+		else {
+			listeFilms.capacite *= 2;
+		}
+		Film** nouvelleListe = new Film * [listeFilms.capacite];
+		copy(listeFilms.elements, listeFilms.elements + listeFilms.nElements, nouvelleListe);
 		delete[] listeFilms.elements;
-		listeFilms.elements = elementsListeFilms;
+		listeFilms.elements = nouvelleListe;
 	}
-
-	listeFilms.elements[listeFilms.nElements - 1] = film;
+	listeFilms.elements[listeFilms.nElements++] = film;
 }
 
-void enleverFilm(ListeFilms& listeFilms, Film* film)
+void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
 {
-	listeFilms.nElements--;
-
-	for (int i : range(listeFilms.nElements)) {
-		if (listeFilms.elements[i] == film) {
-			listeFilms.elements[i] = listeFilms.elements[listeFilms.nElements - 1];
-			delete listeFilms.elements[listeFilms.nElements - 1];
+	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
+		if (film == inputFilm) {
+			film = listeFilms.elements[listeFilms.nElements - 1];
+			delete listeFilms.elements[listeFilms.nElements--];
 			break;
 		}
 	}
@@ -124,9 +96,7 @@ void enleverFilm(ListeFilms& listeFilms, Film* film)
 Acteur* trouverActeur(const ListeFilms& listeFilms, const string& nomActeur)
 {
 	Acteur* ptrActeur = nullptr;
-	// Il faudrait essayer d'implementer span pour films
 	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
-		// Il faudrait essayer d'implementer span pour acteurs
 		for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
 			if (acteur->nom == nomActeur) {
 				ptrActeur = acteur;
@@ -164,7 +134,7 @@ Film* lireFilm(ListeFilms& listeFilms, istream& fichier)
 {
 	Film* film = new Film;
 
-	film->titre = lireString(fichier); // Erreur ici à la 4eme iteration
+	film->titre = lireString(fichier);
 	film->realisateur = lireString(fichier);
 	film->anneeSortie = lireUint16(fichier);
 	film->recette = lireUint16(fichier);
@@ -176,7 +146,7 @@ Film* lireFilm(ListeFilms& listeFilms, istream& fichier)
 		ajouterActeur(film->acteurs, lireActeur(listeFilms, fichier));
 		ajouterFilm(film->acteurs.elements[i]->joueDans, film);
 	}
-	return film; //&film; //TODO: Retourner le pointeur vers le nouveau film.
+	return film;
 }
 
 ListeFilms creerListe(string nomFichier)
