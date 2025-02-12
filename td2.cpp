@@ -147,15 +147,15 @@ Acteur* lireActeur(ListeFilms& listeFilms, istream& fichier)
 	acteurListesFilms.elements = new Film * [acteurListesFilms.capacite];
 
 	string nomActeur = lireString(fichier);
-	if (trouverActeur(listeFilms, nomActeur) != nullptr) {
-		cout << "Nom de l'acteur (EXISTANT): " << trouverActeur(listeFilms, nomActeur)->nom << endl;
-		return trouverActeur(listeFilms, nomActeur);
-	}
-
 	acteur->nom = nomActeur;
 	acteur->anneeNaissance = lireUint16(fichier);
 	acteur->sexe = lireUint8(fichier);
 	acteur->joueDans = acteurListesFilms;
+	if (trouverActeur(listeFilms, nomActeur) != nullptr) {
+		cout << "Nom de l'acteur (EXISTANT): " << trouverActeur(listeFilms, nomActeur)->nom << endl;
+		delete acteur;
+		return trouverActeur(listeFilms, nomActeur);
+	}
 	cout << "Nom de l'acteur (NOUVEAU): " << acteur->nom << endl;
 	return acteur;
 }
@@ -164,13 +164,14 @@ Film* lireFilm(ListeFilms& listeFilms, istream& fichier)
 {
 	Film* film = new Film;
 
-	film->titre = lireString(fichier);
+	film->titre = lireString(fichier); // Erreur ici à la 4eme iteration
 	film->realisateur = lireString(fichier);
 	film->anneeSortie = lireUint16(fichier);
 	film->recette = lireUint16(fichier);
 	film->acteurs.capacite = lireUint8(fichier);
 	film->acteurs.nElements = 0;
 	film->acteurs.elements = new Acteur * [film->acteurs.capacite];
+
 	for (int i : range(film->acteurs.capacite)) {
 		ajouterActeur(film->acteurs, lireActeur(listeFilms, fichier));
 		ajouterFilm(film->acteurs.elements[i]->joueDans, film);
