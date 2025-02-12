@@ -87,7 +87,8 @@ void enleverFilm(ListeFilms& listeFilms, Film* inputFilm)
 	for (Film* film : span(listeFilms.elements, listeFilms.nElements)) {
 		if (film == inputFilm) {
 			film = listeFilms.elements[listeFilms.nElements - 1];
-			delete listeFilms.elements[listeFilms.nElements--];
+			delete listeFilms.elements[listeFilms.nElements - 1];
+			listeFilms.nElements--;
 			break;
 		}
 	}
@@ -173,6 +174,7 @@ ListeFilms creerListe(string nomFichier)
 void detruireFilm(Film* film)
 {
 	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
+		//enleverFilm(acteur->joueDans, film);
 		for (Film* filmActeur : span(acteur->joueDans.elements, acteur->joueDans.nElements)) {
 			if (filmActeur == film) {
 				filmActeur = acteur->joueDans.elements[--acteur->joueDans.nElements];
@@ -253,7 +255,7 @@ int main()
 	cout << ligneDeSeparation << "Liste des films où Benedict Cumberbatch joue sont:" << endl;
 	afficherFilmographieActeur(listeFilms, "Benedict Cumberbatch");
 
-	//TODO: Détruire et enlever le premier film de la liste (Alien).  Ceci devrait "automatiquement" (par ce que font vos fonctions) détruire les acteurs Tom Skerritt et John Hurt, mais pas Sigourney Weaver puisqu'elle joue aussi dans Avatar.
+	detruireFilm(listeFilms.elements[0]);
 
 	cout << ligneDeSeparation << "Les films sont maintenant:" << endl;
 	//TODO: Afficher la liste des films.
