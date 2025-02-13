@@ -7,13 +7,6 @@ using namespace std;
 
 struct Film; struct Acteur; // Permet d'utiliser les types alors qu'ils seront défini après.
 
-/*
-struct ListeFilms {
-	int capacite, nElements;
-	Film** elements; // Pointeur vers un tableau de Film*, chaque Film* pointant vers un Film.
-};
-*/
-
 class ListeFilms
 {
 public:
@@ -25,9 +18,8 @@ public:
 	Acteur* lireActeur(istream& fichier);
 	Film* lireFilm(istream& fichier);
 	ListeFilms(string nomFichier);
-	void afficherListeFilms();
-	void afficherFilmographieActeur(const string& nomActeur);
-
+	void afficherListeFilms() const;
+	void afficherFilmographieActeur(const string& nomActeur) const;
 	int getNElements();
 	Film** getElements();
 

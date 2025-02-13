@@ -119,8 +119,6 @@ Acteur* ListeFilms::lireActeur(istream& fichier)
 		return trouverActeur(nomActeur);
 	}
 
-	ListeFilms acteurListesFilms = ListeFilms();
-	acteur->joueDans = acteurListesFilms;
 	cout << "Nom de l'acteur (NOUVEAU): " << acteur->nom << endl;
 	return acteur;
 }
@@ -186,7 +184,6 @@ void detruireFilm(Film* film)
 		acteur->joueDans.enleverFilm(film);
 		if (acteur->joueDans.getNElements() == 0) {
 			cout << "Destruction de l'acteur: " << acteur->nom << endl;
-			delete[] acteur->joueDans.getElements();
 			delete acteur;
 		}
 	}
@@ -216,7 +213,7 @@ void afficherFilm(const Film& film)
 	}
 }
 
-void ListeFilms::afficherListeFilms()
+void ListeFilms::afficherListeFilms() const
 {
 	static const string ligneDeSeparation = "\n";
 	cout << ligneDeSeparation;
@@ -226,13 +223,13 @@ void ListeFilms::afficherListeFilms()
 	}
 }
 
-void ListeFilms::afficherFilmographieActeur(const string& nomActeur)
+void ListeFilms::afficherFilmographieActeur(const string& nomActeur) const
 {
 	const Acteur* acteur = trouverActeur(nomActeur);
 	if (acteur == nullptr)
 		cout << "Aucun acteur de ce nom" << endl;
 	else
-		afficherListeFilms();
+		acteur->joueDans.afficherListeFilms();
 }
 
 int main()
@@ -260,9 +257,4 @@ int main()
 
 	cout << ligneDeSeparation << "Les films sont maintenant:" << endl;
 	listeFilms.afficherListeFilms();
-
-	//TODO: Faire les appels qui manquent pour avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
-	delete &listeFilms;
-
-	//TODO: Détruire tout avant de terminer le programme.  La bibliothèque de verification_allocation devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
 }
