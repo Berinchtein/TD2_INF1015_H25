@@ -10,16 +10,19 @@ struct Film; struct Acteur; // Permet d'utiliser les types alors qu'ils seront d
 class ListeFilms
 {
 public:
+
 	ListeFilms();
+	ListeFilms(string nomFichier);
 	~ListeFilms();
+
 	void ajouterFilm(Film* film);
 	void enleverFilm(Film* film);
 	Acteur* trouverActeur(const string& nomActeur) const;
 	Acteur* lireActeur(istream& fichier);
 	Film* lireFilm(istream& fichier);
-	ListeFilms(string nomFichier);
 	void afficherListeFilms() const;
 	void afficherFilmographieActeur(const string& nomActeur) const;
+
 	int getNElements();
 	Film** getElements();
 

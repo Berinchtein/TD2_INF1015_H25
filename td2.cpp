@@ -48,6 +48,8 @@ string lireString(istream& fichier)
 
 #pragma endregion//}
 
+#pragma region "Fonctions diverses du TD2"//{
+
 void ajouterActeur(ListeActeurs& listeActeurs, Acteur* acteur) {
 
 	if (listeActeurs.nElements >= listeActeurs.capacite) {
@@ -63,6 +65,70 @@ void ajouterActeur(ListeActeurs& listeActeurs, Acteur* acteur) {
 		listeActeurs.elements = nouvelleListe;
 	}
 	listeActeurs.elements[listeActeurs.nElements++] = acteur;
+}
+
+void detruireFilm(Film* film)
+{
+	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
+		acteur->joueDans.enleverFilm(film);
+		if (acteur->joueDans.getNElements() == 0) {
+			cout << "Destruction de l'acteur: " << acteur->nom << endl;
+			delete acteur;
+		}
+	}
+	delete[] film->acteurs.elements;
+	delete film;
+}
+
+void afficherActeur(const Acteur& acteur)
+{
+	cout << "  " << acteur.nom << ", " << acteur.anneeNaissance << " " << acteur.sexe << endl;
+}
+
+void afficherFilm(const Film& film)
+{
+	cout << "Nom du film: " << film.titre << ", Acteurs:" << endl;
+	for (Acteur* acteur : span(film.acteurs.elements, film.acteurs.nElements)) {
+		afficherActeur(*acteur);
+	}
+}
+
+#pragma endregion//}
+
+#pragma region "Fonctions specifiques a la classe ListesFilms"//{
+
+ListeFilms::ListeFilms()
+{
+	capacite_ = 1;
+	nElements_ = 0;
+	elements_ = new Film * [capacite_];
+}
+
+ListeFilms::ListeFilms(string nomFichier)
+{
+	ifstream fichier(nomFichier, ios::binary);
+	fichier.exceptions(ios::failbit);
+
+	int nElements = lireUint16(fichier);
+
+	capacite_ = 1;
+	nElements_ = 0;
+	elements_ = new Film * [capacite_];
+
+	for (int i : range(nElements)) {
+		cout << "Boucle n." << i + 1 << endl;
+		ajouterFilm(lireFilm(fichier));
+		cout << "capacite listeFilms: " << capacite_ << endl;
+		cout << "nElements listeFilms: " << nElements_ << endl;
+	}
+}
+
+ListeFilms::~ListeFilms()
+{
+	for (Film* film : span(elements_, nElements_)) {
+		detruireFilm(film);
+	}
+	delete[] elements_;
 }
 
 void ListeFilms::ajouterFilm(Film* film) {
@@ -142,77 +208,6 @@ Film* ListeFilms::lireFilm(istream& fichier)
 	return film;
 }
 
-ListeFilms::ListeFilms()
-{
-	capacite_ = 1;
-	nElements_ = 0;
-	elements_ = new Film * [capacite_];
-}
-
-ListeFilms::ListeFilms(string nomFichier)
-{
-	ifstream fichier(nomFichier, ios::binary);
-	fichier.exceptions(ios::failbit);
-
-	int nElements = lireUint16(fichier);
-
-	capacite_ = 1;
-	nElements_ = 0;
-	elements_ = new Film * [capacite_];
-
-	for (int i : range(nElements)) {
-		cout << "Boucle n." << i + 1 << endl;
-		ajouterFilm(lireFilm(fichier));
-		cout << "capacite listeFilms: " << capacite_ << endl;
-		cout << "nElements listeFilms: " << nElements_ << endl;
-	}
-}
-
-int ListeFilms::getNElements()
-{
-	return nElements_;
-}
-
-Film** ListeFilms::getElements()
-{
-	return elements_;
-}
-
-void detruireFilm(Film* film)
-{
-	for (Acteur* acteur : span(film->acteurs.elements, film->acteurs.nElements)) {
-		acteur->joueDans.enleverFilm(film);
-		if (acteur->joueDans.getNElements() == 0) {
-			cout << "Destruction de l'acteur: " << acteur->nom << endl;
-			delete acteur;
-		}
-	}
-	delete[] film->acteurs.elements;
-	delete film;
-}
-
-
-ListeFilms::~ListeFilms()
-{
-	for (Film* film : span(elements_, nElements_)) {
-		detruireFilm(film);
-	}
-	delete[] elements_;
-}
-
-void afficherActeur(const Acteur& acteur)
-{
-	cout << "  " << acteur.nom << ", " << acteur.anneeNaissance << " " << acteur.sexe << endl;
-}
-
-void afficherFilm(const Film& film)
-{
-	cout << "Nom du film: " << film.titre << ", Acteurs:" << endl;
-	for (Acteur* acteur : span(film.acteurs.elements, film.acteurs.nElements)) {
-		afficherActeur(*acteur);
-	}
-}
-
 void ListeFilms::afficherListeFilms() const
 {
 	static const string ligneDeSeparation = "\n";
@@ -231,6 +226,18 @@ void ListeFilms::afficherFilmographieActeur(const string& nomActeur) const
 	else
 		acteur->joueDans.afficherListeFilms();
 }
+
+int ListeFilms::getNElements()
+{
+	return nElements_;
+}
+
+Film** ListeFilms::getElements()
+{
+	return elements_;
+}
+
+#pragma endregion//}
 
 int main()
 {
